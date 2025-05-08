@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from models import DatabaseWrapper
 
 app = Flask(__name__)
@@ -11,6 +11,10 @@ db = DatabaseWrapper(
     database="defaultdb"
 )
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
 @app.route("/studenti", methods=["GET"])
 def elenco_studenti():
     risultati = db.get_studenti()
@@ -19,8 +23,7 @@ def elenco_studenti():
 
 @app.route("/studenti", methods=["POST"])
 def aggiungi():
-    dati = request.get_json()
-    nome = dati["nome"]
+    nome = request.form["nome"]
     db.aggiungi_studente(nome)
     return jsonify({"messaggio": f"{nome} aggiunto"})
 
